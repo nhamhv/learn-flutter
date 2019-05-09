@@ -9,12 +9,8 @@ class ProductsAdminPage extends StatelessWidget {
 
   ProductsAdminPage(this.addProduct, this.deleteProduct);
 
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        drawer: Drawer(
+  Widget _buildSideDraw (BuildContext context) {
+    return Drawer(
           child: Column(
             children: <Widget>[
               AppBar(
@@ -27,10 +23,25 @@ class ProductsAdminPage extends StatelessWidget {
                 onTap: () {
                   Navigator.pushReplacementNamed(context, '/products');
                 },
+              ),
+              ListTile(
+                leading: Icon(Icons.exit_to_app),
+                title: Text('Logut'),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/');
+                },
               )
             ],
           ),
-        ),
+        );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        drawer: _buildSideDraw(context),
         appBar: AppBar(
           title: Text('Manage Products'),
           bottom: TabBar(
