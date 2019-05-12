@@ -1,63 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
 
+import '../scoped-models/products.dart';
 import './product_edit.dart';
-import '../models/product.dart';
 
 class ProductListPage extends StatelessWidget {
-  final List<Product> products;
-  final Function updateProduct;
-  final Function deleteProduct;
-
-  ProductListPage(this.products, this.updateProduct, this.deleteProduct);
-
-  Widget _buildEditbutton (BuildContext context, int index) {
+  Widget _buildEditbutton(
+      BuildContext context, int index, ProductsModel model) {
     return IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (BuildContext context) {
-                        return ProductEditPage(
-                            product: products[index],
-                            updateProduct: updateProduct,
-                            productIndex: index);
-                      }));
-                    },
-                  );
+      icon: Icon(Icons.edit),
+      onPressed: () {
+        model.selectProduct(index);
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (BuildContext context) {
+          return ProductEditPage();
+        }));
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemBuilder: (BuildContext context, int index) {
-        return Dismissible(
-            key: Key(products[index].title),
-            onDismissed: (DismissDirection direction) {
-              if (direction == DismissDirection.endToStart) {
-                deleteProduct(index);
-              } else if ( direction == DismissDirection.startToEnd) {
-                print('Swiped satrt to end');
-              } else {
-                 print('Other');
-              }
-            },
-            background: Container(
-              color: Colors.red,
-            ),
-            child: Column(
-              children: <Widget>[
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: AssetImage(products[index].image),
-                  ),
-                  title: Text(products[index].title),
-                  subtitle: Text('\$${products[index].price.toString()}'),
-                  trailing: _buildEditbutton(context, index),
+    return ScopedModelDescendant<ProductsModel>(
+      builder: (BuildContext context, Widget child, ProductsModel model) {
+        final products = model.products;
+        return ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return Dismissible(
+                key: Key(products[index].title),
+                onDismissed: (DismissDirection direction) {
+                  if (direction == DismissDirection.endToStart) {
+                    model.selectProduct(index);
+                    model.deleteProduct();
+                  } else if (direction == DismissDirection.startToEnd) {
+                    print('Swiped satrt to end');
+                  } else {
+                    print('Other');
+                  }
+                },
+                background: Container(
+                  color: Colors.red,
                 ),
-                Divider(),
-              ],
-            ));
+                child: Column(
+                  children: <Widget>[
+                    ListTile(
+                      leading: CircleAvatar(
+                        backgroundImage: AssetImage(products[index].image),
+                      ),
+                      title: Text(products[index].title),
+                      subtitle: Text('\$${products[index].price.toString()}'),
+                      trailing: _buildEditbutton(context, index, model),
+                    ),
+                    Divider(),
+                  ],
+                ));
+          },
+          itemCount: products.length,
+        );
       },
-      itemCount: products.length,
     );
   }
 }
