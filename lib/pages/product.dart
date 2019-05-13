@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import '../scoped-models/products.dart';
+import '../scoped-models/main.dart';
 import '../models/product.dart';
 import '../widgets/ui_elements/title_default.dart';
 import '../widgets/products/address_tag.dart';
@@ -44,7 +44,7 @@ class ProductPage extends StatelessWidget {
         return Future.value(false);
       },
       child: ScopedModelDescendant(
-        builder: (BuildContext context, Widget child, ProductsModel model) {
+        builder: (BuildContext context, Widget child, MainModel model) {
           final Product product = model.products[productIndex];
 
           return Scaffold(
